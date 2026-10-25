@@ -1,10 +1,10 @@
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
-import LandingPage from './pages/LandingPage'
-import LoginPage from './pages/LoginPage'
-import StudentDashboard from './pages/StudentDashboard'
-import DriverDashboard from './pages/DriverDashboard'
+import LandingPage from './Pages/LandingPage'
+import LoginPage from './Pages/LoginPage'
+import StudentDashboard from './Pages/StudentDashboard'
+import DriverDashboard from './Pages/DriverDashboard'
 
 function App() {
   return (
