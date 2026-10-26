@@ -1,29 +1,90 @@
 import { useState } from "react"
-import { Button, Input, Modal, ConfirmDialog, ToastProvider, useToast } from "@campus/ui"
+import {
+  AdminLayout, DataTable, Button, Input, ConfirmDialog,
+  ToastProvider, useToast,
+} from "@campus/ui"
+
+const ALL_ROWS = Array.from({ length: 23 }, (_, i) => ({
+  id: i + 1,
+  name: `Driver ${i + 1}`,
+  email: `driver${i + 1}@school.edu`,
+  status: i % 3 === 0 ? "PENDING" : i % 3 === 1 ? "APPROVED" : "REJECTED",
+}))
+
+const PAGE_SIZE = 5
 
 function Demo() {
   const toast = useToast()
-  const [open, setOpen] = useState(false)
-  const [confirm, setConfirm] = useState(false)
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState("")
+  const [target, setTarget] = useState(null)
+
+  const filtered = ALL_ROWS.filter((r) =>
+    r.name.toLowerCase().includes(search.toLowerCase())
+  )
+  const pageCount = Math.ceil(filtered.length / PAGE_SIZE)
+  const rows = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  const columns = [
+    { key: "name", header: "Name" },
+    { key: "email", header: "Email" },
+    { key: "status", header: "Status" },
+    {
+      key: "actions",
+      header: "Actions",
+      render: (row) => (
+        <Button variant="danger" onClick={() => setTarget(row)}>Reject</Button>
+      ),
+    },
+  ]
+
   return (
-    <div className="p-8">
-      <h1 className="mb-4 text-2xl font-bold">Main Admin</h1>
-      <Input label="University name" placeholder="e.g. UNILAG" />
-      <Input label="Email" error="Email is required" />
-      <div className="flex gap-2">
-        <Button onClick={() => setOpen(true)}>Open modal</Button>
-        <Button variant="danger" onClick={() => setConfirm(true)}>Reject</Button>
-        <Button variant="secondary" onClick={() => toast.show("Saved successfully", "success")}>Show toast</Button>
-      </div>
-      <Modal open={open} onClose={() => setOpen(false)} title="Hello">
-        <p className="text-sm">This is a modal.</p>
-      </Modal>
-      <ConfirmDialog open={confirm} onClose={() => setConfirm(false)} onConfirm={() => { setConfirm(false); toast.show("Rejected", "error") }}
-        message="This will reject the application." confirmText="Reject" />
-    </div>
+    <AdminLayout
+      appName="Main Admin"
+      navItems={[
+        { label: "Dashboard", href: "/" },
+        { label: "Universities", href: "/universities" },
+        { label: "Audit logs", href: "/audit-logs" },
+      ]}
+      activePath="/"
+      user={{ name: "Peter", role: "MAIN_ADMIN" }}
+      onLogout={() => toast.show("Logged out", "info")}
+    >
+      <h1 className="mb-4 text-2xl font-bold">Driver applications</h1>
+      <DataTable
+        columns={columns}
+        rows={rows}
+        page={page}
+        pageCount={pageCount}
+        onPageChange={setPage}
+        filters={
+          <Input
+            placeholder="Search by name"
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+            className="w-64"
+          />
+        }
+      />
+      <ConfirmDialog
+        open={!!target}
+        onClose={() => setTarget(null)}
+        onConfirm={() => {
+          toast.show(`${target.name} rejected`, "error")
+          setTarget(null)
+        }}
+        title="Reject application?"
+        message={target ? `This will reject ${target.name}.` : ""}
+        confirmText="Reject"
+      />
+    </AdminLayout>
   )
 }
 
 export default function App() {
-  return <ToastProvider><Demo /></ToastProvider>
+  return (
+    <ToastProvider>
+      <Demo />
+    </ToastProvider>
+  )
 }
