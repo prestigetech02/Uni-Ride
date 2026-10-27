@@ -6,6 +6,9 @@ import Students from "./pages/Students.jsx"
 import RoutesPage from "./pages/RoutesPage.jsx"
 import Vehicles from "./pages/Vehicles.jsx"
 import Schedules from "./pages/Schedules.jsx"
+import Bookings from "./pages/Bookings.jsx"
+import Incidents from "./pages/Incidents.jsx"
+import Reports from "./pages/Reports.jsx"
 
 const navItems = [
   { label: "Dashboard", href: "/transport-admin" },
@@ -14,6 +17,9 @@ const navItems = [
   { label: "Routes and stops", href: "/transport-admin/routes" },
   { label: "Vehicles", href: "/transport-admin/vehicles" },
   { label: "Schedules", href: "/transport-admin/schedules" },
+  { label: "Bookings", href: "/transport-admin/bookings" },
+  { label: "Incidents", href: "/transport-admin/incidents" },
+  { label: "Reports", href: "/transport-admin/reports" },
 ]
 
 function Shell() {
@@ -33,6 +39,9 @@ function Shell() {
         <Route path="routes" element={<RoutesPage />} />
         <Route path="vehicles" element={<Vehicles />} />
         <Route path="schedules" element={<Schedules />} />
+        <Route path="bookings" element={<Bookings />} />
+        <Route path="incidents" element={<Incidents />} />
+        <Route path="reports" element={<Reports />} />
       </Routes>
     </AdminLayout>
   )
