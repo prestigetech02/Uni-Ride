@@ -8,6 +8,7 @@ const colors = {
   OPEN: "bg-yellow-100 text-yellow-800",
   REJECTED: "bg-red-100 text-red-800",
   CANCELLED: "bg-red-100 text-red-800",
+  SUSPENDED: "bg-red-100 text-red-800",
   INACTIVE: "bg-gray-200 text-gray-700",
 }
 

@@ -1,5 +1,7 @@
-import { Link, Routes, Route, useLocation } from "react-router-dom"
-import { AdminLayout, ToastProvider } from "@campus/ui"
+import { Link, Navigate, Routes, Route, useLocation } from "react-router-dom"
+import { AdminLayout, ToastProvider, Loading } from "@campus/ui"
+import { AuthProvider, useAuth } from "./auth.jsx"
+import Login from "./pages/Login.jsx"
 import Dashboard from "./pages/Dashboard.jsx"
 import DriverApplications from "./pages/DriverApplications.jsx"
 import Students from "./pages/Students.jsx"
@@ -24,13 +26,15 @@ const navItems = [
 
 function Shell() {
   const { pathname } = useLocation()
+  const { user, signOut } = useAuth()
   return (
     <AdminLayout
       appName="Transport Admin"
       navItems={navItems}
       LinkComponent={Link}
       activePath={pathname}
-      user={{ name: "Peter", role: "TRANSPORT_ADMIN" }}
+      user={{ name: user.username, role: user.role }}
+      onLogout={signOut}
     >
       <Routes>
         <Route index element={<Dashboard />} />
@@ -47,10 +51,22 @@ function Shell() {
   )
 }
 
+function RequireAuth({ children }) {
+  const { user, loading } = useAuth()
+  if (loading) return <Loading />
+  if (!user) return <Navigate to="/transport-admin/login" replace />
+  return children
+}
+
 export default function TransportAdminApp() {
   return (
-    <ToastProvider>
-      <Shell />
-    </ToastProvider>
+    <AuthProvider>
+      <ToastProvider>
+        <Routes>
+          <Route path="login" element={<Login />} />
+          <Route path="*" element={<RequireAuth><Shell /></RequireAuth>} />
+        </Routes>
+      </ToastProvider>
+    </AuthProvider>
   )
 }

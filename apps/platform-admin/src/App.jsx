@@ -1,5 +1,7 @@
-import { Link, Routes, Route, useLocation } from "react-router-dom"
-import { AdminLayout, ToastProvider } from "@campus/ui"
+import { Link, Navigate, Routes, Route, useLocation } from "react-router-dom"
+import { AdminLayout, ToastProvider, Loading } from "@campus/ui"
+import { AuthProvider, useAuth } from "./auth.jsx"
+import Login from "./pages/Login.jsx"
 import Dashboard from "./pages/Dashboard.jsx"
 import Universities from "./pages/Universities.jsx"
 import Users from "./pages/Users.jsx"
@@ -18,30 +20,44 @@ const navItems = [
 
 function Shell() {
   const { pathname } = useLocation()
+  const { user, signOut } = useAuth()
   return (
     <AdminLayout
       appName="Main Admin"
       navItems={navItems}
       LinkComponent={Link}
       activePath={pathname}
-      user={{ name: "Peter", role: "MAIN_ADMIN" }}
+      user={{ name: user.username, role: user.role }}
+      onLogout={signOut}
     >
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/universities" element={<Universities />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/invitations" element={<Invitations />} />
-        <Route path="/audit-logs" element={<AuditLogs />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route index element={<Dashboard />} />
+        <Route path="universities" element={<Universities />} />
+        <Route path="users" element={<Users />} />
+        <Route path="invitations" element={<Invitations />} />
+        <Route path="audit-logs" element={<AuditLogs />} />
+        <Route path="settings" element={<Settings />} />
       </Routes>
     </AdminLayout>
   )
 }
 
+function RequireAuth({ children }) {
+  const { user, loading } = useAuth()
+  if (loading) return <Loading />
+  if (!user) return <Navigate to="/login" replace />
+  return children
+}
+
 export default function App() {
   return (
-    <ToastProvider>
-      <Shell />
-    </ToastProvider>
+    <AuthProvider>
+      <ToastProvider>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/*" element={<RequireAuth><Shell /></RequireAuth>} />
+        </Routes>
+      </ToastProvider>
+    </AuthProvider>
   )
 }
