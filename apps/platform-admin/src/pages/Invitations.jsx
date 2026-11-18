@@ -1,9 +1,11 @@
+import { USE_MOCK } from "../config.js"
+import { MOCK_INVITATIONS } from "../mock.js"
 import { useState } from "react"
 import { DataTable, Button, Input, Modal, ConfirmDialog, StatusBadge, useToast } from "@campus/ui"
 
 export default function Invitations() {
   const toast = useToast()
-  const [rows, setRows] = useState([])
+  const [rows, setRows] = useState(USE_MOCK ? MOCK_INVITATIONS : [])
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState("")
   const [error, setError] = useState("")
@@ -64,3 +66,4 @@ export default function Invitations() {
     </div>
   )
 }
+

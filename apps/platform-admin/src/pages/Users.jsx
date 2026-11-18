@@ -1,5 +1,7 @@
 import { useState } from "react"
 import { DataTable, Input, Select, StatusBadge } from "@campus/ui"
+import { USE_MOCK } from "../config.js"
+import { MOCK_USERS } from "../mock.js"
 
 const roleOptions = [
   { value: "", label: "All roles" },
@@ -9,7 +11,7 @@ const roleOptions = [
 ]
 
 export default function Users() {
-  const [rows] = useState([])
+  const [rows] = useState(USE_MOCK ? MOCK_USERS : [])
   const [search, setSearch] = useState("")
   const [role, setRole] = useState("")
 
